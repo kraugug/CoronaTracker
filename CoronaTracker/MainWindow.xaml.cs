@@ -69,6 +69,10 @@ namespace CoronaTracker
 
 		private void Refresh(string location)
 		{
+			CanRefresh = false;
+			DataGridConfirmed.ItemsSource = null;
+			DataGridDeaths.ItemsSource = null;
+			DataGridRecovered.ItemsSource = null;
 			ProgressBarProgress.IsIndeterminate = true;			
 			using (WebClient webClient = new WebClient())
 			{
@@ -108,6 +112,7 @@ namespace CoronaTracker
 				collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
 				DataGridRecovered.ItemsSource = collectionView;
 			}
+			CanRefresh = true;
 		}
 
 		private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) => Dispatcher.Invoke(() => ProgressBarProgress.Value = e.ProgressPercentage);
