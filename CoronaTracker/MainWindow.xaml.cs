@@ -41,10 +41,21 @@ namespace CoronaTracker
 			private set
 			{
 				m_CanRefresh = value;
-				PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(CanRefresh)));
+				OnPropertyChanged(nameof(CanRefresh));
 			}
 		}
 		private bool m_CanRefresh;
+
+		public string Source
+		{
+			get => m_Source;
+			set
+			{
+				m_Source = value;
+				OnPropertyChanged(nameof(Source));
+			}
+		}
+		private string m_Source;
 
 		#endregion
 
@@ -60,12 +71,11 @@ namespace CoronaTracker
 
 		#endregion
 
-		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
-		{
-			((LineSeries)ChartHistory.Series[0]).ItemsSource = (e.AddedItems[0] as CoronaLocationInfo).History;
-		}
+		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) => ((LineSeries)ChartHistory.Series[0]).ItemsSource = (e.AddedItems[0] as CoronaLocationInfo)?.History;
 
 		private void HyperlinkClick(object sender, RoutedEventArgs e) => Process.Start((e.OriginalSource as Hyperlink).NavigateUri.OriginalString);
+
+		protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 
 		private void Refresh(string location)
 		{
@@ -73,7 +83,7 @@ namespace CoronaTracker
 			DataGridConfirmed.ItemsSource = null;
 			DataGridDeaths.ItemsSource = null;
 			DataGridRecovered.ItemsSource = null;
-			ProgressBarProgress.IsIndeterminate = true;			
+			Source = Properties.Resources.WebLink_CoronaTrackerApi;
 			using (WebClient webClient = new WebClient())
 			{
 				webClient.DownloadDataCompleted += WebClient_DownloadDataCompleted;
@@ -90,29 +100,34 @@ namespace CoronaTracker
 
 		private void WebClient_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			Dispatcher.Invoke(() => ProgressBarProgress.IsIndeterminate = false);
-			using (Stream stream = new MemoryStream(e.Result))
-			using (JsonTextReader reader = new JsonTextReader(new StreamReader(stream)))
+			//Dispatcher.Invoke(() => ProgressBarProgress.IsIndeterminate = false);
+			Task.Factory.StartNew(new Action(() =>
 			{
-				JsonSerializer serializer = JsonSerializer.Create();
-				CoronaData data = (CoronaData)serializer.Deserialize(reader, typeof(CoronaData));
-				// Confirmed
-				ListCollectionView collectionView = new ListCollectionView(data.Confirmed.Locations);
-				collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
-				collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
-				DataGridConfirmed.ItemsSource = collectionView;
-				// Deaths
-				collectionView = new ListCollectionView(data.Deaths.Locations);
-				collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
-				collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
-				DataGridDeaths.ItemsSource = collectionView;
-				// Recovered
-				collectionView = new ListCollectionView(data.Recovered.Locations);
-				collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
-				collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
-				DataGridRecovered.ItemsSource = collectionView;
-			}
-			CanRefresh = true;
+				using (Stream stream = new MemoryStream(e.Result))
+				using (JsonTextReader reader = new JsonTextReader(new StreamReader(stream)))
+				{
+					JsonSerializer serializer = JsonSerializer.Create();
+					CoronaData data = (CoronaData)serializer.Deserialize(reader, typeof(CoronaData));
+					// Confirmed
+					ListCollectionView collectionView = new ListCollectionView(data.Confirmed.Locations);
+					collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Province), ListSortDirection.Ascending));
+					Dispatcher.Invoke(() => DataGridConfirmed.ItemsSource = collectionView);
+					// Deaths
+					collectionView = new ListCollectionView(data.Deaths.Locations);
+					collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Province), ListSortDirection.Ascending));
+					Dispatcher.Invoke(() => DataGridDeaths.ItemsSource = collectionView);
+					// Recovered
+					collectionView = new ListCollectionView(data.Recovered.Locations);
+					collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
+					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Province), ListSortDirection.Ascending));
+					Dispatcher.Invoke(() => DataGridRecovered.ItemsSource = collectionView);
+				}
+			})).ContinueWith(new Action<Task>((task) => Dispatcher.Invoke(() => CanRefresh = true)));
 		}
 
 		private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) => Dispatcher.Invoke(() => ProgressBarProgress.Value = e.ProgressPercentage);
