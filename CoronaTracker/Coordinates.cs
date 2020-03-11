@@ -14,7 +14,7 @@ namespace CoronaTracker
 		#region Properties
 
 		[JsonIgnore]
-		public string GoogleMapsLink { get => string.Format("https://www.google.com/maps/place/{0},{1}", Lattitude, Longnitude); }
+		public string GoogleMapsLink { get { string.Format("https://www.google.com/maps/place/{0},{1}", Lattitude, Longnitude); } }
 
 		[JsonProperty(PropertyName = "lat")]
 		public double Lattitude { get; set; }
@@ -26,7 +26,10 @@ namespace CoronaTracker
 
 		#region Methods
 
-		public override string ToString() => string.Format("{0}, {1}", Lattitude, Longnitude);
+		public override string ToString()
+		{
+			return string.Format("{0}, {1}", Lattitude, Longnitude);
+		}
 
 		#endregion
 	}

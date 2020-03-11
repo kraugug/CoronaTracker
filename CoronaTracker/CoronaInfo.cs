@@ -26,7 +26,10 @@ namespace CoronaTracker
 
 		#region Constructor
 
-		public CoronaInfo() => Locations = new ObservableCollection<CoronaLocationInfo>();
+		public CoronaInfo()
+		{
+			Locations = new ObservableCollection<CoronaLocationInfo>();
+		}
 
 		#endregion
 	}

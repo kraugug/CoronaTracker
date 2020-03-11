@@ -29,7 +29,10 @@ namespace CoronaTracker
 
 		#region Constructor
 
-		public CoronaLocationInfo() => History = new Dictionary<DateTime, int>();
+		public CoronaLocationInfo()
+		{
+			History = new Dictionary<DateTime, int>();
+		}
 
 		#endregion
 	}
