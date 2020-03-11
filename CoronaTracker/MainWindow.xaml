@@ -19,6 +19,7 @@
 		<Grid.RowDefinitions>
 			<RowDefinition Height="Auto" />
 			<RowDefinition Height="2*" />
+			<RowDefinition Height="Auto" />
 			<RowDefinition Height="1*" />
 			<RowDefinition Height="Auto" />
 		</Grid.RowDefinitions>
@@ -156,8 +157,10 @@
 			</TabItem>
 		</TabControl>
 
+		<GridSplitter Grid.Row="2" HorizontalAlignment="Stretch" Height="6" />
+
 		<!--  Description  -->
-		<GroupBox Grid.Row="2" Margin="0,5,0,5" Padding="5" Header="Information">
+		<GroupBox Grid.Row="3" Margin="0,5,0,5" Padding="5" Header="Information">
 			<charts:Chart Name="ChartHistory" Title="History">
 				<charts:Chart.Axes>
 					<charts:LinearAxis Title="Date" Width="0" Location="Bottom" Orientation="X" />
@@ -171,7 +174,7 @@
 			</charts:Chart>
 		</GroupBox>
 		<!--  Status bar  -->
-		<StatusBar Grid.Row="3">
+		<StatusBar Grid.Row="4">
 			<StatusBarItem Name="StatusBarItemPropegress">
 				<ProgressBar Name="ProgressBarProgress" Foreground="Green" Maximum="100" Minimum="0" Width="200" Height="16" />
 			</StatusBarItem>

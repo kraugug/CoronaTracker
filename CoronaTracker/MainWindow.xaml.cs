@@ -100,7 +100,6 @@ namespace CoronaTracker
 
 		private void WebClient_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
 		{
-			//Dispatcher.Invoke(() => ProgressBarProgress.IsIndeterminate = false);
 			Task.Factory.StartNew(new Action(() =>
 			{
 				using (Stream stream = new MemoryStream(e.Result))
@@ -125,7 +124,11 @@ namespace CoronaTracker
 					collectionView.GroupDescriptions.Add(new PropertyGroupDescription(nameof(CoronaLocationInfo.Country)));
 					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Country), ListSortDirection.Ascending));
 					collectionView.SortDescriptions.Add(new SortDescription(nameof(CoronaLocationInfo.Province), ListSortDirection.Ascending));
-					Dispatcher.Invoke(() => DataGridRecovered.ItemsSource = collectionView);
+					Dispatcher.Invoke(() =>
+					{
+						DataGridRecovered.ItemsSource = collectionView;
+						DataGridConfirmed.SelectedIndex = 0;
+					});
 				}
 			})).ContinueWith(new Action<Task>((task) => Dispatcher.Invoke(() => CanRefresh = true)));
 		}
