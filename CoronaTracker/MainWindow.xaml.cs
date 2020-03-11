@@ -37,7 +37,7 @@ namespace CoronaTracker
 
 		public bool CanRefresh
 		{
-			get => m_CanRefresh;
+			get { return m_CanRefresh; }
 			private set
 			{
 				m_CanRefresh = value;
@@ -48,7 +48,7 @@ namespace CoronaTracker
 
 		public string Source
 		{
-			get => m_Source;
+			get { return m_Source; }
 			set
 			{
 				m_Source = value;
@@ -63,19 +63,37 @@ namespace CoronaTracker
 
 		#region Commands
 
-		private void CommandFileExit_Executed(object sender, ExecutedRoutedEventArgs e) => Close();
+		private void CommandFileExit_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Close();
+		}
 
-		private void CommandRefresh_CanExecute(object sender, CanExecuteRoutedEventArgs e) => e.CanExecute = CanRefresh;
+		private void CommandRefresh_CanExecute(object sender, CanExecuteRoutedEventArgs e)
+		{
+			e.CanExecute = CanRefresh;
+		}
 
-		private void CommandRefresh_Executed(object sender, ExecutedRoutedEventArgs e) => Refresh(Properties.Resources.WebLink_CoronaTrackerApi);
+		private void CommandRefresh_Executed(object sender, ExecutedRoutedEventArgs e)
+		{
+			Refresh(Properties.Resources.WebLink_CoronaTrackerApi);
+		}
 
 		#endregion
 
-		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e) => ((LineSeries)ChartHistory.Series[0]).ItemsSource = (e.AddedItems[0] as CoronaLocationInfo)?.History;
+		private void DataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
+		{
+			((LineSeries)ChartHistory.Series[0]).ItemsSource = e.AddedItems.Count > 0 ? (e.AddedItems[0] as CoronaLocationInfo)?.History : null;
+		}
 
-		private void HyperlinkClick(object sender, RoutedEventArgs e) => Process.Start((e.OriginalSource as Hyperlink).NavigateUri.OriginalString);
+		private void HyperlinkClick(object sender, RoutedEventArgs e)
+		{
+			Process.Start((e.OriginalSource as Hyperlink).NavigateUri.OriginalString);
+		}
 
-		protected virtual void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+		}
 
 		private void Refresh(string location)
 		{
@@ -94,8 +112,33 @@ namespace CoronaTracker
 
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
-			ChartHistory.Title = ((sender as TabControl).SelectedItem as TabItem).Header;
-			((LineSeries)ChartHistory.Series[0]).Title = ChartHistory.Title;
+			TabItem tab = (sender as TabControl).SelectedItem as TabItem;
+			CoronaLocationInfo info = e.AddedItems[0] as CoronaLocationInfo;
+			if (tab != null && info != null)
+			{
+
+				switch (tab.TabIndex)
+				{
+					case 0:
+						info = DataGridConfirmed.SelectedItem as CoronaLocationInfo;
+						if (DataGridConfirmed.SelectedItem == null)
+							DataGridConfirmed.SelectedIndex = 0;
+						break;
+					case 1:
+						info = DataGridDeaths.SelectedItem as CoronaLocationInfo;
+						if (DataGridDeaths.SelectedItem == null)
+							DataGridDeaths.SelectedIndex = 0;
+						break;
+					case 2:
+						info = DataGridRecovered.SelectedItem as CoronaLocationInfo;
+						if (DataGridRecovered.SelectedItem == null)
+							DataGridRecovered.SelectedIndex = 0;
+						break;
+				}
+				((LineSeries)ChartHistory.Series[0]).ItemsSource = info.History;
+				ChartHistory.Title = info == null ? "History chart" : string.Format("{0} - {1}", tab.Header, info.Country);
+				((LineSeries)ChartHistory.Series[0]).Title = ChartHistory.Title;
+			}
 		}
 
 		private void WebClient_DownloadDataCompleted(object sender, DownloadDataCompletedEventArgs e)
@@ -133,9 +176,15 @@ namespace CoronaTracker
 			})).ContinueWith(new Action<Task>((task) => Dispatcher.Invoke(() => CanRefresh = true)));
 		}
 
-		private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) => Dispatcher.Invoke(() => ProgressBarProgress.Value = e.ProgressPercentage);
+		private void WebClient_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e) => Dispatcher.Invoke(() =>
+		{
+			ProgressBarProgress.Value = e.ProgressPercentage;
+		});
 
-		private void Window_Loaded(object sender, RoutedEventArgs e) => Refresh(Properties.Resources.WebLink_CoronaTrackerApi);
+		private void Window_Loaded(object sender, RoutedEventArgs e)
+		{
+			Refresh(Properties.Resources.WebLink_CoronaTrackerApi);
+		}
 
 		#endregion
 
