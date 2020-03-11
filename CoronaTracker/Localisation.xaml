@@ -1,0 +1,12 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:CoronaTracker"
+                    xmlns:mscore="clr-namespace:System;assembly=mscorlib">
+	<!--  MainWindow  -->
+	<mscore:String x:Key="MainWindow_MenuItem_File_Header">_File</mscore:String>
+	<mscore:String x:Key="MainWindow_MenuItem_FileExit_Header">_Exit</mscore:String>
+	<mscore:String x:Key="MainWindow_MenuItem_Refresh">_Refresh</mscore:String>
+	<mscore:String x:Key="MainWindow_TabItem_Header_Confirmed">Confirmed</mscore:String>
+	<mscore:String x:Key="MainWindow_TabItem_Header_Deaths">Deaths</mscore:String>
+	<mscore:String x:Key="MainWindow_TabItem_Header_Recovered">Recovered</mscore:String>
+</ResourceDictionary>
