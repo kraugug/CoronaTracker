@@ -113,31 +113,34 @@ namespace CoronaTracker
 		private void TabControl_SelectionChanged(object sender, SelectionChangedEventArgs e)
 		{
 			TabItem tab = (sender as TabControl).SelectedItem as TabItem;
-			CoronaLocationInfo info = e.AddedItems[0] as CoronaLocationInfo;
-			if (tab != null && info != null)
+			if (e.AddedItems.Count > 0)
 			{
-
-				switch (tab.TabIndex)
+				CoronaLocationInfo info = e.AddedItems[0] as CoronaLocationInfo;
+				if (tab != null && info != null)
 				{
-					case 0:
-						info = DataGridConfirmed.SelectedItem as CoronaLocationInfo;
-						if (DataGridConfirmed.SelectedItem == null)
-							DataGridConfirmed.SelectedIndex = 0;
-						break;
-					case 1:
-						info = DataGridDeaths.SelectedItem as CoronaLocationInfo;
-						if (DataGridDeaths.SelectedItem == null)
-							DataGridDeaths.SelectedIndex = 0;
-						break;
-					case 2:
-						info = DataGridRecovered.SelectedItem as CoronaLocationInfo;
-						if (DataGridRecovered.SelectedItem == null)
-							DataGridRecovered.SelectedIndex = 0;
-						break;
+
+					switch (tab.TabIndex)
+					{
+						case 0:
+							info = DataGridConfirmed.SelectedItem as CoronaLocationInfo;
+							if (DataGridConfirmed.SelectedItem == null)
+								DataGridConfirmed.SelectedIndex = 0;
+							break;
+						case 1:
+							info = DataGridDeaths.SelectedItem as CoronaLocationInfo;
+							if (DataGridDeaths.SelectedItem == null)
+								DataGridDeaths.SelectedIndex = 0;
+							break;
+						case 2:
+							info = DataGridRecovered.SelectedItem as CoronaLocationInfo;
+							if (DataGridRecovered.SelectedItem == null)
+								DataGridRecovered.SelectedIndex = 0;
+							break;
+					}
+					((LineSeries)ChartHistory.Series[0]).ItemsSource = info.History;
+					ChartHistory.Title = info == null ? "History chart" : string.Format("{0} - {1}", tab.Header, info.Country);
+					((LineSeries)ChartHistory.Series[0]).Title = ChartHistory.Title;
 				}
-				((LineSeries)ChartHistory.Series[0]).ItemsSource = info.History;
-				ChartHistory.Title = info == null ? "History chart" : string.Format("{0} - {1}", tab.Header, info.Country);
-				((LineSeries)ChartHistory.Series[0]).Title = ChartHistory.Title;
 			}
 		}
 
