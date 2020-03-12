@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Corona Tracker"
-#define MyAppVersion "1.0"
+#define MyAppVersion "1.0.1.0"
 #define MyAppPublisher "Michal Heczko"
 #define MyAppURL "http://kraugug.net/corona"
 #define MyAppExeName "CoronaTracker.exe"
@@ -22,13 +22,13 @@ DefaultDirName={autopf}\{#MyAppName}
 DisableProgramGroupPage=yes
 ; The [Icons] "quicklaunchicon" entry uses {userappdata} but its [Tasks] entry has a proper IsAdminInstallMode Check.
 UsedUserAreasWarning=no
-LicenseFile=E:\Projects\.GitHub\CoronaTracker\LICENSE
+LicenseFile=.\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=commandline
-OutputDir=E:\Projects\.GitHub\CoronaTracker
+OutputDir=.\
 OutputBaseFilename=CoronaTracker
-SetupIconFile=E:\Projects\.GitHub\CoronaTracker\CoronaTracker\Corona Virus.ico
+SetupIconFile=.\CoronaTracker\Corona Virus.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -43,9 +43,9 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked; OnlyBelowVersion: 6.1; Check: not IsAdminInstallMode
 
 [Files]
-Source: "E:\Projects\.GitHub\CoronaTracker\CoronaTracker\bin\Release\CoronaTracker.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Projects\.GitHub\CoronaTracker\CoronaTracker\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "E:\Projects\.GitHub\CoronaTracker\CoronaTracker\bin\Release\System.Windows.Controls.DataVisualization.Toolkit.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\CoronaTracker\bin\Release\CoronaTracker.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\CoronaTracker\bin\Release\Newtonsoft.Json.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: ".\CoronaTracker\bin\Release\System.Windows.Controls.DataVisualization.Toolkit.dll"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -55,4 +55,3 @@ Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\{#MyAppName}"; Fil
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
-
