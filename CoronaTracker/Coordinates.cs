@@ -17,10 +17,10 @@ namespace CoronaTracker
 		public string GoogleMapsLink { get { return string.Format("https://www.google.com/maps/place/{0},{1}", Lattitude, Longnitude); } }
 
 		[JsonProperty(PropertyName = "lat")]
-		public double Lattitude { get; set; }
+		public double? Lattitude { get; set; }
 
 		[JsonProperty(PropertyName = "long")]
-		public double Longnitude { get; set; }
+		public double? Longnitude { get; set; }
 
 		#endregion
 
